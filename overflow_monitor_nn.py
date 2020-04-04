@@ -33,15 +33,16 @@ df = np.array(df)
 # test split函数介绍https://www.cnblogs.com/bonelee/p/8036024.html
 # 为什么这里划分的时候不用validation集呢？==貌似cv集只在逻辑回归模型里面有==不对，神经网络也有cv集，但是现在暂时把cv集合train集不分开，等到后面再分开
 # randon-state为不同实数时，train_test_split抓取不同的train集合。实数一定时，抓取的train集合一定。不设置randon-state时（none），每次运行时抓取的train集都不一样。
-x_train, x_test, y_train, y_test = train_test_split(df, label, test_size=0.2, random_state=1234)
+x_train, x_test, y_train, y_test = train_test_split(df, label, test_size=0.2, random_state=1234,stratify=label)
 # 构建序列模型
 model = Sequential()
 # 三层神经网络，第一个隐含层节点数120，激活函数relu。输入维度为3，这肯定的，因为输入节点是三个
 # 要用几层中间节点？==自己试试看几层效果好就用几层（我中期先用一层吧，按照handbook里面有讲最佳层数和每层的节点个数）
 # #############################为什么不定义输入层？==不用专门定义输入层，在第一层隐藏节点那定义输入维度就行。如果一次分析6个特征的话，这里的input要改成6
-model.add(Dense(8, activation='relu', input_dim=6))
-# 第二个隐含层节点数100，激活函数relu。输出维度是100
-model.add(Dense(8, activation='relu'))  # 本想先暂时删掉一层隐藏节点
+model.add(Dense(15, activation='relu', input_dim=6))
+# 第二个隐含层节点数15，激活函数relu。输出维度是15
+# 经验公式推导出的节点的中心数目约为8；
+model.add(Dense(15, activation='relu'))  # 本想先暂时删掉一层隐藏节点
 # 输出层1个节点，激活函数sigmoid.输出维度是1
 model.add(Dense(1, activation='sigmoid'))
 # 模型编译
@@ -57,7 +58,8 @@ epoch          acc
 5              0.88
 50             0.95     
 """
-history = model.fit(x_train, y_train, validation_split=0.25, epochs=50, batch_size=128, verbose=1)
+# 原epoch是50
+history = model.fit(x_train, y_train, validation_split=0.25, epochs=200, batch_size=128, verbose=1)
 
 # 保存模型
 # 参考链接：https://blog.csdn.net/Andrew_jdw/article/details/82656605
